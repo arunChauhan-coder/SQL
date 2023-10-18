@@ -1,0 +1,525 @@
+175
+Combine Two Tables
+SELECT
+P.first_name,P.Last_name,A.city,A.State
+FROM
+Person P INNER JOIN
+Address A
+ON P.personId = A.PersonId
+------------------------------------------\
+
+176
+Second Highest Salary
+SELECT
+distinct Salary
+From Employee
+order by Salary desc
+limit 1 offset 1  
+
+
+// offset will skip the first row
+or 
+
+Second Highest Salary
+SELECT
+distinct Salary
+From Employee
+order by Salary desc
+limit 1,1                  first 1: no of rows to skip
+			   seconf 1: no. of rows to display  
+
+
+2nd approch
+select salary from(
+SELECT
+Salary,
+dense_rank() 
+over(order by Salary desc) as r
+from Employee)as T1
+where r = 2;
+-----------------------------------\
+
+178
+Rank Scores
+select 
+scores, 
+dense_rank() 
+over(order by scores desc) as r
+from table
+
+-----------------------------------\
+
+180
+Write a SQL query to find all numbers that appear at least three times
+consecutively.
+
+SELECT DISTINCT num
+FROM (
+    SELECT num,
+           LAG(num) OVER (ORDER BY id) AS prev_num,
+           LEAD(num) OVER (ORDER BY id) AS next_num
+    FROM YourTable
+) AS subquery
+WHERE num = prev_num AND num = next_num;
+
+
+181
+Employees Earning More Than Their Managers
+
+select e.Name as Employee
+from Employee as e inner join Employee as m on e.ManagerId = m.id
+where e.Salary > m.Salary;
+
+182
+Write a SQL query to find all duplicate emails in a table named Person.
+
+select email,count(email)
+from person
+group by email
+having count(email) >1
+
+------------------------------------\
+183
+Customers Who Never Order
+
+select name from Customers 
+where id not in (select CustomerId
+from Orders);
+
+or 
+
+select C.name from Customers C
+left join orders o on c.id = o.customer_Id
+where o.order_ID is null;
+
+---------------------------------\
+197
+Given a Weather table, write a SQL query to find all dates' Ids with higher
+temperature compared to its previous (yesterday's) dates.
+
+select w1.id
+from weather w1 , weather w2
+where datediff(w1.recordDate,w2.RecordDate)=1
+and w1.Temperature> w2.Temperature
+
+find all pairs of employees from the same department
+
+SELECT e1.employee_name AS employee1, e2.employee_name AS employee2, e1.department
+FROM employees e1
+INNER JOIN employees e2 ON e1.department = e2.department
+WHERE e1.employee_id <> e2.employee_id;
+
+
+Q Write a SQL query to find the 
+names of employees who have not been assigned to any project.
+
+select name from employees
+where id not in (select emp_id from project)
+
+2nd approch ( using join is good computaionally use less power)
+
+select E.name from Employee E 
+Left JOIN Project P ON
+E.ID = P.Emp_id
+where P.Emp_id is NUll 
+
+-------------------------------------------------------/
+
+In the Student table, the marks column contains a list of 
+values separated by commas.How can you determine the number 
+of values in this comma-separated list?
+
+
+StudentID	StudentName	  Marks
+1	          Alice	    90,85,78,92
+
+select studentId , StudentName , Marks,
+ LENGTH(Marks)-LENGTH(REPLACE(Marks,',','')) +1 as Count
+ from Students
+ 
+ ---------------------------------------------------------------------------
+ 
+Q Find out even emp ids in table
+
+select emp_id from employee
+where MOD(emp_id,2) == 0
+
+
+Q Find out odd emp ids in table
+
+select emp_id from employee
+where MOD(emp_id,2) == 1
+
+Q Find the last record of the table
+
+select * from emp 
+where empid = (select max(empid) from emp)
+
+or 
+select * from emp order by empid desc limit 1
+
+Q list of emp working in same department ?
+
+SELECT e1.EmployeeName AS Employee1, e2.EmployeeName AS Employee2, e1.DepartmentID AS Department
+FROM Employees e1
+JOIN Employees e2 ON e1.DepartmentID = e2.DepartmentID
+WHERE e1.EmployeeID <> e2.EmployeeID;
+
+
+================Strings=====================
+
+
+
+-- concat
+select concat(first_name,"  ",last_name) from customers1;
+
+-- Lower case
+select lcase(first_name) from customers1; 
+-- or
+select lower(first_name) from customers1;
+
+-- uper case 
+select upper(first_name) from customers1;
+
+-- length 
+select length("Arun");
+
+-- LOCATE(): This function is used to find the nth position of the given word in a string.
+select locate("arun","The boy arun is good arun",1);
+-- return the index no. of 1st letter of the string (9 in this case)
+-- 1 means check from 1st string
+select locate("arun","The boy arun is good arun",10);
+-- here i used 10 so that it start seraching after first occurence of arun
+-- so that it can locate the second occurence
+
+
+-- ltrim , rtrim
+select LTRIM('     geeks');
+
+-- POSITION(): This function is used to find position of the 
+ -- first occurrence of the given alphabet.
+ SELECT POSITION('e' IN 'geeksforgeeks');
+
+-- REPEAT(): This function is used to write the given string again 
+ -- and again till the number of times mentioned.
+SELECT REPEAT('geeks', 2);
+
+-- STRCMP(): 
+-- This function is used to compare 2 strings.
+-- If string1 and string2 are the same, the STRCMP function will return 0.
+-- If string1 is smaller than string2, the STRCMP function will return -1.
+-- If string1 is larger than string2, the STRCMP function will return 1.
+SELECT STRCMP('google.com', 'geeksforgeeks.com');
+
+-- SUBSTR(): 
+-- This function is used to find a sub string from the a string from the given position.
+select SUBSTR('geeksforgeeks', 1, 5);
+
+-- Trim
+select Trim("  Arun  ");
+
+-- DATE
+
+
+SELECT CURRENT_TIMESTAMP;
+
+CREATE TABLE Orders__ (
+  OrderID INT NOT NULL AUTO_INCREMENT,
+  OrderNumber VARCHAR(255) NOT NULL,
+  OrderedAt DATETIME NOT NULL,
+  CustomerID INT NOT NULL,
+  PRIMARY KEY (OrderID)
+);
+
+INSERT INTO Orders__ (OrderNumber, OrderedAt, CustomerID)
+VALUES ('1234567890', '2023-09-15 00:00:00', 12345),
+       ('9876543210', '2023-09-14 23:59:59', 98765),
+       ('0123456789', '2023-09-14 23:59:58', 01234);
+select * from Orders__;
+
+-- DATE(): This function extracts the date part from a datetime expression. For example, 
+-- the following query will extract the date from the OrderDate column:
+-- if the col habe date and time bith then it extract date only
+
+select date(OrderedAt) from orders__;
+-- MONTH()
+
+select extract(month from OrderedAt) from orders__;
+-- year()
+
+select extract(year from OrderedAt) from orders__;
+
+-- DAY
+
+select extract(day from OrderedAt) from orders__;
+
+-- weekday
+select extract(weekday from OrderedAt) from orders__;
+
+-- Hour minute and second
+select extract(hour from OrderedAt), extract(minute from OrderedAt), extract(second from OrderedAt) from orders__;
+
+-- DateAdd : This function adds a specified number of days, months, years, 
+-- hours, minutes, or seconds to a date expression. 
+-- For example, the following query will add 30 days to the OrderDate column:
+
+select DATE_ADD(OrderedAt,interval 10 day) as o from orders__;
+
+select datediff(now(),OrderedAt)as diff , OrderedAt, now() as now from orders__;
+
+select datediff('month',now(),OrderedAt) as month_diff from orders__;
+
+-- this will add 2 day to current day
+select date_add(now(),interval 2 day)
+
+-- this will subtract 2 day from now
+select date_add(now(),interval -2 day)
+
+------------------------------------------------------------------------
+Questions on Strings
+
+Q1 Select those name whoese 2nd character is a vowel
+
+select first_name from Customers
+ where substr(first_name,2,1) in ('a','e','i','o','u');
+ 
+
+Q2: Select names from the Employees table where the 3rd character is a consonant,
+ and the last character is the same as the first character.
+ 
+ select first_name from customers where
+ substr(first_name,3,1) not in ('a','e','i','o','u') and
+ substr(first_name,-1,1) = substr(first_name,1,1);
+ 
+ more accurate ans is
+ select first_name from customers where
+ substr(lower(first_name),3,1) not in ('a','e','i','o','u') and
+ substr(lower(first_name),-1,1) = substr(lower(first_name),1,1);
+ 
+ 
+ Q3: Select names from the Employees table where
+ the 2nd and 4th characters are vowels (a, e, i, o, u), and 
+ the name has at least one consonant between the 2nd and 4th characters.
+ 
+ select f_name from customers 
+ where substr(first_name,2,1) in ('a','e','i','o','u')
+ and substr(first_name,4,1) in ('a','e','i','o','u')
+ and substr(first_name,3,1) not in ('a','e','i','o','u');
+ 
+ Q4: Select the names from the Employees table that contain a
+ palindrome within their name.
+
+select first_name from customers 
+where left(first_name) = right(first_name);
+
+Q5 :  Write a query to extract username(characters before @ symbol) 
+from the Email_ID column.
+
+select substr(email,1,locate('@',email,1)-1) as user_name from employee;
+
+Q6: Write a query to extract domain name like .com, .in, .au etc.
+ from the Email_ID column.
+ 
+ Select substr(email,locate('.',email,1)) from employee;
+
+Q7: Write a query to extract email service provider names like google, 
+yahoo, outlook, etc. from the Email_ID column.
+
+select substr(email,locate('@',email,1)+1,locate('.',email,1)-1) from employee;
+
+Write a query to extract the employees’ details who joined in the year 1981.
+
+SELECT *
+FROM employees
+WHERE SUBSTR(BirthDate,3,2) = '81';
+
+WINDOW FUNCTIONS
+
+QLead by 2 lag by 2:
+
+SELECT new_id,
+LEAD(new_id, 2) OVER( ORDER BY new_id) AS "LEAD_by2",
+LAG(new_id, 2) OVER( ORDER BY new_id) AS "LAG_by2"
+FROM test_data
+
+
+Q Update the name of the employee as xyz where eid =905
+update employee set e_name = 'Ram Sahu'
+where eid = 905;
+
+Q Find the first 5 chracters from a column
+
+select left(col_name,5) from table
+
+Q Mask a col such that last 5 characters
+are converted to *
+let col length is 9
+select concat(left(col,4),'*****') from table
+
+Q find  the 3rd to 6th character of a col
+
+select substr(col,3,3) from table;
+
+Q reterive age of emp who have age grater 
+than what ravi has
+
+select name from employee where
+age >(
+select age from employee
+where name = 'ravi')
+
+** you can use join to solve those subquery question
+where u can use primary key as condition like here age is not pk so we
+cant use join here eg: if we want to find customer who never order so we can use cid
+as condition which is avaiable in both customer and order table.
+
+Difference between view and CTE
+
+let's consider a scenario where we have a database with two tables: Orders and
+Customers.We want to create a query that lists all orders along with the customer names. 
+We'll demonstrate how this can be done using both a View and a CTE.   
+
+-- Create a View to join Orders and Customers tables
+CREATE VIEW OrderDetails AS
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Orders o
+JOIN Customers c ON o.CustomerID = c.CustomerID;
+
+-- Query the View
+SELECT * FROM OrderDetails;
+In this code, we first create a View named OrderDetails
+that encapsulates the logic of joining the Orders and Customers tables.
+Then, we query the View to retrieve the desired information. 
+
+-- Using a CTE to join Orders and Customers tables
+WITH OrderDetails AS (
+    SELECT o.OrderID, o.OrderDate, c.CustomerName
+    FROM Orders o
+    JOIN Customers c ON o.CustomerID = c.CustomerID
+)
+SELECT * FROM OrderDetails;
+   In this code,we use a CTE named OrderDetails defined with the WITH clause. 
+   The CTE contains the same logic as the View, joining the Orders and Customers 
+   tables. After defining the CTE, we immediately select from it in the same query.
+
+Both the View and the CTE produce the same result, 
+but the CTE is defined and used within a single query, making it suitable
+for scenarios where you don't need to reuse the logic in other queries.
+Views, on the other hand, provide a named, reusable structure 
+for encapsulating query logic that can be used in multiple queries
+ or by different users.
+ 
+
+Q Find the list of employee that are assigned to some project
+(two table employee and project)
+
+select e.emp_name from 
+employee e inner join project p
+on e.eid = p.emp_id;
+
+ Find the list of emp along with their respective project names
+ emp with no project should have their project asa null
+ 
+select E.emp_name, p.project_name
+from employee E left join project P
+on E.id = P.emp_id
+
+Q let say you have wifi_id , wifi_speed , wifi_latency
+date
+
+-- find the average wifi speed for each wifi
+-- find the avg wifi speed of each wifi in last 2 days
+
+select avg(wifi_speed) from wifi
+where dt>= date_add(now(),interval -2 day)
+group by wifi_id
+order by dt desc
+---------------------------------------------------------------------
+
+Group by vs distinct:
+
+select distinct(name) from Employee
+
+Select name from Employee group by name
+
+both will give the same result
+
+Dont do :   Select distinct(name) from employee group by(name);
+
+--------------------------------------------------------------------------
+
+
+"Suppose you have a table named orders with the following columns: order_id, 
+customer_id, order_date, and order_amount. Write a SQL query to find the
+ cumulative sum of order_amount for each customer, ordered by customer_id 
+ and order_date. Use the PARTITION BY clause to achieve this."
+
+You can use the PARTITION BY clause along with the SUM() 
+window function to calculate the cumulative sum of order_amount for each customer.
+
+Suppose you have a sequence of numbers: 1, 2, 3, 4, 5.
+
+The cumulative sum of this sequence would be:
+
+The first number (1) is 1.
+The sum of the first two numbers (1 + 2) is 3.
+The sum of the first three numbers (1 + 2 + 3) is 6.
+The sum of the first four numbers (1 + 2 + 3 + 4) is 10.
+The sum of all five numbers (1 + 2 + 3 + 4 + 5) is 15.
+
+select sum(order_amount) over (partiton by customer_id
+ order by order_date )from orders 
+ order by customer_id , order_date
+---------------------------------------------------------------------
+
+
+*** GROUP BY:
+
+Use GROUP BY when you want to aggregate data based on one or more columns 
+and create summary statistics for each group.
+It's typically used for operations that result in a 
+single row per group, such as calculating sums, averages, counts, 
+or other aggregation functions for each group.
+Example: Calculating the total sales by product category, 
+finding the average age of customers in each city, or counting 
+the number of orders per customer.
+PARTITION BY (Window Functions):
+
+Use PARTITION BY when you want to perform calculations or 
+aggregations within partitions of your data while maintaining all 
+rows in the result set.
+It's often used for tasks that require comparing values within a specific 
+window or partition of data, such as calculating moving averages, 
+cumulative sums, or ranking items within groups.
+Window functions allow you to perform calculations on subsets of
+your data without collapsing the result to a single row per group.
+
+Example: Calculating the running total of sales for each product over time,
+ranking employees by salary within each department, or finding the lead and 
+lag values within a partition.
+In summary, GROUP BY is used for summarizing data at the group level, 
+resulting in one row per group, while PARTITION BY (window functions) 
+is used for performing calculations within partitions or windows, 
+preserving all rows in the result set.
+----------------------------------------------------------------------------
+Q)) Retrieve the departments where the total salary expenditure
+  exceeds the average total salary expenditure across all departments.
+  
+SELECT department_id 
+FROM employees 
+GROUP BY department_id
+HAVING SUM(salary) > (
+    SELECT AVG(total_salary) 
+    FROM (
+        SELECT department_id, SUM(salary) as total_salary 
+        FROM employees 
+        GROUP BY department_id
+    ) AS subquery
+);
+  
+  
+
+----SQL THEROY INTERVIEW QUESTIONS:
+
+
+
