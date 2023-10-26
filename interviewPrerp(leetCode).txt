@@ -517,7 +517,30 @@ HAVING SUM(salary) > (
     ) AS subquery
 );
   
-  
+Q) Find the employee with the third highest salary without using the LIMIT clause.
+
+select salary from (
+select dense_rank() over(order by salary desc )as r from employee
+) where r =3;
+
+Q) Identify departments that have less than the company-wide median number of employees
+select department_id from employee
+group by department_id
+having count(id)<(
+select Avg(emp_cnt) from(
+select department_id,count(id)as emp_cnt
+from employee
+group by department_id
+  ) sub_query
+  )
+ Q Get the most common job title among employees who earn above the company average.
+ 
+ select job_title from employee 
+ where salary >(
+ select Avg(salary) as a_sal from employee
+ ) 
+ group by job_title
+ order by salary desc limit 1
 
 ----SQL THEROY INTERVIEW QUESTIONS:
 
