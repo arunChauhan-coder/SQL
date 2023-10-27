@@ -535,12 +535,46 @@ group by department_id
   )
  Q Get the most common job title among employees who earn above the company average.
  
- select job_title from employee 
- where salary >(
- select Avg(salary) as a_sal from employee
- ) 
- group by job_title
- order by salary desc limit 1
+SELECT job_title
+FROM employee
+WHERE salary > (SELECT AVG(salary) FROM employee)
+GROUP BY job_title
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+--------------------------------------------------------------------------------
+Q Find the total number of employees in the 'Sales' department and the 'Marketing' 
+department combined in a company database. Assume you have an 'employees' table with
+ columns 'employee_id,' 'department,' and other relevant information.
+ Write an SQL query to calculate the sum of employees in these two departments."
+ 
+ select count(*) from employee
+ where dept in ('Sales','Marketing')
+
+---------------------------------------------------------------------------
+ 
+Identify employees who earn more than the average 
+salary in both their department and the company.
+
+
+ELECT id, name, salary 
+FROM employees e1 
+WHERE salary > (
+    SELECT AVG(salary) 
+    FROM employees 
+    WHERE department_id = e1.department_id
+) 
+AND salary > (
+    SELECT AVG(salary) 
+    FROM employees
+);
+
+
+
+ 
+ 
+ 
+ 
+ 
 
 ----SQL THEROY INTERVIEW QUESTIONS:
 
