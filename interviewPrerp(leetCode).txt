@@ -552,21 +552,30 @@ department combined in a company database. Assume you have an 'employees' table 
 
 ---------------------------------------------------------------------------
  
-Identify employees who earn more than the average 
-salary in both their department and the company.
+ Identify employees who earn more than the average 
+ salary in both their department and the company.
 
-
-ELECT id, name, salary 
-FROM employees e1 
-WHERE salary > (
+ SELECT id, name, salary 
+ FROM employees e1 
+ WHERE salary > (
     SELECT AVG(salary) 
     FROM employees 
     WHERE department_id = e1.department_id
-) 
-AND salary > (
+ ) 
+ AND salary > (
     SELECT AVG(salary) 
     FROM employees
-);
+ );
+ 
+Retrieve the month (in numbers) with the
+ highest total sales from a table of daily sales.
+ 
+SELECT MONTH(date) as sales_month 
+FROM sales 
+GROUP BY MONTH(date) 
+ORDER BY SUM(amount) DESC 
+LIMIT 1;
+
 
 
 
