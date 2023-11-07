@@ -1,3 +1,14 @@
+What Is SQL's Order of Execution?
+FROM/JOIN. The FROM and/or JOIN clauses are executed first to determine the data of interest.
+WHERE. The WHERE clause is executed to filter out records that do not meet the constraints.
+GROUP BY. ...
+HAVING. ...
+SELECT. ...
+ORDER BY. ...
+LIMIT/OFFSET.
+
+
+
 175
 Combine Two Tables
 SELECT
@@ -30,6 +41,14 @@ limit 1,1                  first 1: no of rows to skip
 
 
 2nd approch
+
+select salary, dense rank(order by salary desc) as r
+from employee where r = 2
+
+The above one is wrong  bcz
+you cannot reference an alias (r) in the WHERE clause in the same query. 
+This is because the logical order of query execution dictates that the
+WHERE clause is evaluated before the SELECT clause
 select salary from(
 SELECT
 Salary,
@@ -61,7 +80,14 @@ FROM (
     FROM YourTable
 ) AS subquery
 WHERE num = prev_num AND num = next_num;
-
+ 
+ 2nd approch :
+ SELECT DISTINCT num
+ FROM numbers
+ WHERE num = LAG(num) OVER (ORDER BY id)
+ AND num = LEAD(num) OVER (ORDER BY id);
+  
+  
 
 181
 Employees Earning More Than Their Managers
