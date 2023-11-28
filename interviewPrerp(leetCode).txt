@@ -268,15 +268,14 @@ select * from Orders__;
 -- if the col habe date and time bith then it extract date only
 
 select date(OrderedAt) from orders__;
+
 -- MONTH()
-
 select extract(month from OrderedAt) from orders__;
--- year()
 
+-- year()
 select extract(year from OrderedAt) from orders__;
 
 -- DAY
-
 select extract(day from OrderedAt) from orders__;
 
 -- weekday
@@ -380,7 +379,7 @@ select left(col_name,5) from table
 Q Mask a col such that last 5 characters
 are converted to *
 let col length is 9
-select concat(left(col,4),'*****') from table
+select concat(left(col,length(col)-5,'*****') from table
 
 Q find  the 3rd to 6th character of a col
 
@@ -602,6 +601,33 @@ GROUP BY MONTH(date)
 ORDER BY SUM(amount) DESC 
 LIMIT 1;
 
+
+To find CustomerID who purchased both products 'A' and 'B,'
+ you can use the INTERSECT operator. Here's the SQL query:
+-- Select CustomerID who purchased product 'A'
+SELECT CustomerID FROM #Purchase WHERE ProductCode = 'A'
+
+-- Intersect with select CustomerID who purchased product 'B'
+INTERSECT
+
+SELECT CustomerID FROM #Purchase WHERE ProductCode = 'B';
+
+
+To find CustomerID who purchased both products 'A' and 'B' but not 'C', 
+you can use a combination of INTERSECT and EXCEPT operators. Here's the SQL query:
+
+-- Select CustomerID who purchased product 'A'
+SELECT CustomerID FROM #Purchase WHERE ProductCode = 'A'
+
+-- Intersect with select CustomerID who purchased product 'B'
+INTERSECT
+
+SELECT CustomerID FROM #Purchase WHERE ProductCode = 'B'
+
+-- Exclude CustomerID who purchased product 'C'
+EXCEPT
+
+SELECT CustomerID FROM #Purchase WHERE ProductCode = 'C';
 
 
 
